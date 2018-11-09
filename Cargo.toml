@@ -1,0 +1,6 @@
+[package]
+name = "obscensus"
+version = "0.1.0"
+authors = ["Eero Häihälä <eero.haihala@gmail.com>"]
+
+[dependencies]
