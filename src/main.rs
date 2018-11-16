@@ -3,26 +3,32 @@ use std::sync::mpsc::{Sender, Receiver};
 use std::sync::mpsc;
 use std::io;
 
-mod console;
+mod engine;
 
 fn main() {
 	let (cin_tx, cin_rx): (Sender<String>, Receiver<String>) = mpsc::channel();
 
 	spawn(move || {
-		console::start(cin_rx)
+		engine::start(cin_rx)
 	});
 
 	let mut input: String = String::new();
 
-	while input != "quit" {
+	loop {
 		match io::stdin().read_line(&mut input) {
-			Ok(n) => {
+			Ok(_n) => {
 				match cin_tx.send(input.trim().to_string()) {
-					Ok(_result) => {}
-					Err(error) => println!("error: {}", error)
+					Ok(_n) => {}
+					Err(error) => {
+						println!("Channel error: {}", error);
+						break;
+					}
 				}
 			}
-			Err(error) => println!("error: {}", error)
+			Err(error) => {
+				println!("Line read error: {}", error);
+				break;
+			}
 		}
 		input=String::new();
 	}
